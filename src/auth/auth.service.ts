@@ -18,7 +18,8 @@ export class AuthService {
       where: { email: username },
     });
 
-    const isValid = await bcrypt.compare(pass, user.password);
+    let isValid = false;
+    if (user) isValid = await bcrypt.compare(pass, user.password);
 
     if (isValid) {
       const { dataValues } = user;
