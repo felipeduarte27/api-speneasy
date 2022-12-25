@@ -3,10 +3,3 @@ export class CreateUserDto {
   email: number;
   password: string;
 }
-
-export class UpdateUserDto {
-  id: number;
-  name: string;
-  email: number;
-  password: string;
-}

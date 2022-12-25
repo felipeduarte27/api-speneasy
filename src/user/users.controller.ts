@@ -9,8 +9,7 @@ import {
   Request,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
-import { User } from './interfaces/users.interface';
-import { CreateUserDto, UpdateUserDto } from './dto/user.dto';
+import { CreateUserDto } from './dto/user.dto';
 import { LocalAuthGuard } from 'src/auth/local-auth.guard';
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
 import { AuthService } from 'src/auth/auth.service';
@@ -23,25 +22,26 @@ export class UsersController {
   ) {}
 
   @Get('findAll')
-  async getAll(): Promise<User[]> {
-    return this.usersService.findAll();
+  async getAll() {
+    return await this.usersService.findAll();
   }
 
   @Get('findById/:id')
-  async getById(@Param() params): Promise<User> {
+  async getById(@Param() params) {
     const { id } = params;
     return this.usersService.findById(id);
   }
 
   @Post('createUser')
-  async create(@Body() body: CreateUserDto): Promise<User> {
+  async create(@Body() body: CreateUserDto) {
     return this.usersService.create(body);
   }
 
   @UseGuards(JwtAuthGuard)
-  @Put('updateUser')
-  async update(@Body() body: UpdateUserDto): Promise<User> {
-    return this.usersService.update(body);
+  @Put('updateUser/:id')
+  async update(@Body() body: CreateUserDto, @Param() params) {
+    const { id } = params;
+    return this.usersService.update(body, id);
   }
 
   @UseGuards(LocalAuthGuard)
