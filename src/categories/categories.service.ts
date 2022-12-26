@@ -1,7 +1,13 @@
-import { Injectable, Inject } from '@nestjs/common';
+import {
+  Injectable,
+  Inject,
+  InternalServerErrorException,
+  NotFoundException,
+} from '@nestjs/common';
 import { Categories } from './categories.entity';
 import { User } from 'src/user/user.entity';
-import { CreateCategoriesDTO } from './dto/categories.dto';
+import { CreateCategoriesDTO } from './dto/create-categories.dto';
+import { UpdateCategoriesDTO } from './dto/update-categories.dto';
 
 @Injectable()
 export class CategoriesService {
@@ -11,19 +17,47 @@ export class CategoriesService {
   ) {}
 
   async findByid(id: number): Promise<Categories> {
-    const dataDB = await this.categoriesRepository.findOne({
-      attributes: ['id', 'name'],
-      where: { id: id },
-      include: {
-        model: User,
-        attributes: ['id', 'name', 'email'],
-      },
-    });
-    return dataDB;
+    try {
+      const dataDB = await this.categoriesRepository.findOne({
+        attributes: ['id', 'name'],
+        where: { id: id },
+        include: {
+          model: User,
+          attributes: ['id', 'name', 'email'],
+        },
+      });
+
+      if (!dataDB) {
+        throw new NotFoundException('Dado não encontrado !');
+      }
+
+      return dataDB;
+    } catch (errors) {
+      throw new InternalServerErrorException(errors.message);
+    }
   }
 
   async create(categories: CreateCategoriesDTO): Promise<Categories> {
-    const dataDB = await this.categoriesRepository.create({ ...categories });
-    return dataDB;
+    try {
+      const dataDB = await this.categoriesRepository.create({ ...categories });
+      return dataDB;
+    } catch (errors) {
+      throw new InternalServerErrorException(errors.message);
+    }
+  }
+
+  async update(category: UpdateCategoriesDTO, id: number): Promise<Categories> {
+    try {
+      const categoryDB = await this.categoriesRepository.findOne({
+        where: { id: id },
+      });
+      const dataDb = categoryDB.update({
+        ...category,
+      });
+
+      return dataDb;
+    } catch (errors) {
+      throw new InternalServerErrorException(errors.message);
+    }
   }
 }

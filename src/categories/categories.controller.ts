@@ -1,13 +1,15 @@
-import { Controller, Param, Get, Post, Body } from '@nestjs/common';
+import { Controller, Param, Get, Post, Put, Body } from '@nestjs/common';
 import { CategoriesService } from './categories.service';
-import { CreateCategoriesDTO } from './dto/categories.dto';
+import { CreateCategoriesDTO } from './dto/create-categories.dto';
+import { UpdateCategoriesDTO } from './dto/update-categories.dto';
+import { IdParamsDTO } from '../pipe-validation/id-params.dto';
 
 @Controller('categories')
 export class CategoriesController {
   constructor(private categoriesService: CategoriesService) {}
 
   @Get('findById/:id')
-  async findById(@Param() params) {
+  async findById(@Param() params: IdParamsDTO) {
     const { id } = params;
     return this.categoriesService.findByid(id);
   }
@@ -15,5 +17,14 @@ export class CategoriesController {
   @Post('createCategories')
   async create(@Body() body: CreateCategoriesDTO) {
     return this.categoriesService.create(body);
+  }
+
+  @Put('updateCategories/:id')
+  async update(
+    @Body() body: UpdateCategoriesDTO,
+    @Param() params: IdParamsDTO,
+  ) {
+    const { id } = params;
+    return this.categoriesService.update(body, id);
   }
 }
