@@ -9,7 +9,9 @@ import {
   Request,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
-import { CreateUserDto } from './dto/user.dto';
+import { CreateUserDto } from './dto/create-user.dto';
+import { UpdateUserDTO } from './dto/update-user.dto';
+import { IdParamsDTO } from 'src/pipe-validation/id-params.dto';
 import { LocalAuthGuard } from 'src/auth/local-auth.guard';
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
 import { AuthService } from 'src/auth/auth.service';
@@ -24,12 +26,12 @@ export class UsersController {
   @UseGuards(JwtAuthGuard)
   @Get('findAll')
   async getAll() {
-    return await this.usersService.findAll();
+    return this.usersService.findAll();
   }
 
   @UseGuards(JwtAuthGuard)
   @Get('findById/:id')
-  async getById(@Param() params) {
+  async getById(@Param() params: IdParamsDTO) {
     const { id } = params;
     return this.usersService.findById(id);
   }
@@ -41,7 +43,7 @@ export class UsersController {
 
   @UseGuards(JwtAuthGuard)
   @Put('updateUser/:id')
-  async update(@Body() body: CreateUserDto, @Param() params) {
+  async update(@Body() body: UpdateUserDTO, @Param() params: IdParamsDTO) {
     const { id } = params;
     return this.usersService.update(body, id);
   }

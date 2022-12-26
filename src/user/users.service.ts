@@ -1,6 +1,12 @@
-import { Injectable, Inject } from '@nestjs/common';
+import {
+  Injectable,
+  Inject,
+  NotFoundException,
+  InternalServerErrorException,
+} from '@nestjs/common';
 import { User } from './user.entity';
-import { CreateUserDto } from './dto/user.dto';
+import { CreateUserDto } from './dto/create-user.dto';
+import { UpdateUserDTO } from './dto/update-user.dto';
 
 @Injectable()
 export class UsersService {
@@ -10,31 +16,37 @@ export class UsersService {
   ) {}
 
   async create(user: CreateUserDto): Promise<User> {
-    const dataDB = this.usersRepository.create({
-      ...user,
-    });
-
-    return dataDB;
+    try {
+      return this.usersRepository.create({
+        ...user,
+      });
+    } catch (errors) {
+      throw new InternalServerErrorException(errors.message);
+    }
   }
 
-  async update(user: CreateUserDto, id: number): Promise<User> {
-    const userSB = await this.usersRepository.findOne({
-      where: { id: id },
-    });
-    const dataDB = userSB.update({
-      ...user,
-    });
-
-    return dataDB;
+  async update(user: UpdateUserDTO, id: number): Promise<User> {
+    try {
+      const userSB = await this.usersRepository.findOne({
+        where: { id: id },
+      });
+      return userSB.update({
+        ...user,
+      });
+    } catch (errors) {
+      throw new InternalServerErrorException(errors.message);
+    }
   }
 
   async findAll(): Promise<User[]> {
-    const allUsers = this.usersRepository.findAll();
-    return allUsers;
+    return this.usersRepository.findAll();
   }
 
   async findById(id: number): Promise<User> {
-    const dataDB = this.usersRepository.findOne({ where: { id: id } });
-    return dataDB;
+    try {
+      return this.usersRepository.findOne({ where: { id: id } });
+    } catch (errors) {
+      throw new NotFoundException('Dado não encontrado !');
+    }
   }
 }
