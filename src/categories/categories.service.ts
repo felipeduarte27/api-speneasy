@@ -39,8 +39,7 @@ export class CategoriesService {
 
   async create(categories: CreateCategoriesDTO): Promise<Categories> {
     try {
-      const dataDB = await this.categoriesRepository.create({ ...categories });
-      return dataDB;
+      return this.categoriesRepository.create({ ...categories });
     } catch (errors) {
       throw new InternalServerErrorException(errors.message);
     }
@@ -51,11 +50,9 @@ export class CategoriesService {
       const categoryDB = await this.categoriesRepository.findOne({
         where: { id: id },
       });
-      const dataDb = categoryDB.update({
+      return categoryDB.update({
         ...category,
       });
-
-      return dataDb;
     } catch (errors) {
       throw new InternalServerErrorException(errors.message);
     }

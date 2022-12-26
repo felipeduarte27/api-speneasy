@@ -21,11 +21,13 @@ export class UsersController {
     private authService: AuthService,
   ) {}
 
+  @UseGuards(JwtAuthGuard)
   @Get('findAll')
   async getAll() {
     return await this.usersService.findAll();
   }
 
+  @UseGuards(JwtAuthGuard)
   @Get('findById/:id')
   async getById(@Param() params) {
     const { id } = params;
