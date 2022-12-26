@@ -23,7 +23,6 @@ export class CategoriesService {
   }
 
   async create(categories: CreateCategoriesDTO): Promise<Categories> {
-    console.log(categories);
     const dataDB = await this.categoriesRepository.create({ ...categories });
     return dataDB;
   }
