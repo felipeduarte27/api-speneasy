@@ -7,12 +7,14 @@ import {
 import { User } from './user.entity';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDTO } from './dto/update-user.dto';
+import { MailerService } from '@nestjs-modules/mailer';
 
 @Injectable()
 export class UsersService {
   constructor(
     @Inject('USERS_REPOSITORY')
     private usersRepository: typeof User,
+    private mailerService: MailerService,
   ) {}
 
   async create(user: CreateUserDto): Promise<User> {
@@ -47,6 +49,42 @@ export class UsersService {
       return this.usersRepository.findOne({ where: { id: id } });
     } catch (errors) {
       throw new NotFoundException('Dado não encontrado !');
+    }
+  }
+
+  async sendEmail(email: string, newPassword: string, name: string) {
+    this.mailerService.sendMail({
+      to: email,
+      from: 'suporte@speneasy.com',
+      subject: 'Recuperação de Senha - Speneasy',
+      html: `<h4>Olá ${name},</h4>
+             <br>
+             Sua Solicitação de recuperação de senha foi processada.
+             <br>
+             <br>
+             Sua nova senha é: <b>${newPassword}</b>
+             <br>
+             <br>
+             <br>
+             <i>Este email foi gerando automaticamente e não deve ser respondido.</i>            
+             `,
+    });
+  }
+
+  async forgotPassword(email: string) {
+    try {
+      const tempPassword = Math.random().toString(36).slice(-10);
+      const userDB = await this.usersRepository.findOne({ where: { email } });
+      const dataDB = await userDB.update({
+        password: tempPassword,
+      });
+      if (dataDB) {
+        const { name } = dataDB.dataValues;
+        this.sendEmail(email, tempPassword, name);
+      }
+      return dataDB;
+    } catch (errors) {
+      throw new InternalServerErrorException(errors.message);
     }
   }
 }

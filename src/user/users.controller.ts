@@ -12,6 +12,7 @@ import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDTO } from './dto/update-user.dto';
 import { IdParamsDTO } from 'src/pipe-validation/id-params.dto';
+import { ForgotPasswordDTO } from './dto/forgot-password.dto';
 import { LocalAuthGuard } from 'src/auth/local-auth.guard';
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
 import { AuthService } from 'src/auth/auth.service';
@@ -52,5 +53,11 @@ export class UsersController {
   @Post('auth/login')
   async login(@Request() req) {
     return this.authService.login(req.user);
+  }
+
+  @Post('forgotPassword')
+  async forgotPassword(@Body() body: ForgotPasswordDTO) {
+    const { email } = body;
+    return this.usersService.forgotPassword(email);
   }
 }
