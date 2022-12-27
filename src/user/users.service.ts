@@ -64,8 +64,7 @@ export class UsersService {
              <br>
              Sua nova senha é: <b>${newPassword}</b>
              <br>
-             <br>
-             <br>
+             <br>             
              <i>Este email foi gerando automaticamente e não deve ser respondido.</i>            
              `,
     });
