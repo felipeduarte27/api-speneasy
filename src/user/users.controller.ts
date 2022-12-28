@@ -7,6 +7,8 @@ import {
   Param,
   UseGuards,
   Request,
+  UseInterceptors,
+  UploadedFile,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
@@ -16,6 +18,7 @@ import { ForgotPasswordDTO } from './dto/forgot-password.dto';
 import { LocalAuthGuard } from 'src/auth/local-auth.guard';
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
 import { AuthService } from 'src/auth/auth.service';
+import { FileInterceptor } from '@nestjs/platform-express';
 
 @Controller('users')
 export class UsersController {
@@ -59,5 +62,15 @@ export class UsersController {
   async forgotPassword(@Body() body: ForgotPasswordDTO) {
     const { email } = body;
     return this.usersService.forgotPassword(email);
+  }
+
+  @Post('upload/:id')
+  @UseInterceptors(FileInterceptor('file'))
+  uploadFile(
+    @UploadedFile() file: Express.Multer.File,
+    @Param() params: IdParamsDTO,
+  ) {
+    console.log(params);
+    console.log(file);
   }
 }
