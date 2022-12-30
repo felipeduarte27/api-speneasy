@@ -13,11 +13,11 @@ import {
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDTO } from './dto/update-user.dto';
-import { IdParamsDTO } from 'src/pipe-validation/id-params.dto';
+import { IdParamsDTO } from 'src/modules/core/validation/id-params.dto';
 import { ForgotPasswordDTO } from './dto/forgot-password.dto';
-import { LocalAuthGuard } from 'src/auth/local-auth.guard';
-import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
-import { AuthService } from 'src/auth/auth.service';
+import { LocalAuthGuard } from 'src/modules/core/auth/local-auth.guard';
+import { JwtAuthGuard } from 'src/modules/core/auth/jwt-auth.guard';
+import { AuthService } from 'src/modules/core/auth/auth.service';
 import { FileInterceptor } from '@nestjs/platform-express';
 
 @Controller('users')

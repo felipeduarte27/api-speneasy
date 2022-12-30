@@ -10,8 +10,8 @@ import {
 import { CategoriesService } from './categories.service';
 import { CreateCategoriesDTO } from './dto/create-categories.dto';
 import { UpdateCategoriesDTO } from './dto/update-categories.dto';
-import { IdParamsDTO } from '../pipe-validation/id-params.dto';
-import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
+import { IdParamsDTO } from '../../core/validation/id-params.dto';
+import { JwtAuthGuard } from 'src/modules/core/auth/jwt-auth.guard';
 
 @Controller('categories')
 @UseGuards(JwtAuthGuard)

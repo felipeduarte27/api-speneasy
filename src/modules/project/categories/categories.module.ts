@@ -2,7 +2,7 @@ import { Module } from '@nestjs/common';
 import { CategoriesController } from './categories.controller';
 import { CategoriesService } from './categories.service';
 import { categoriesProvider } from './categories.provider';
-import { DatabaseModule } from 'src/database/database.module';
+import { DatabaseModule } from 'src/modules/core/database/database.module';
 
 @Module({
   imports: [DatabaseModule],

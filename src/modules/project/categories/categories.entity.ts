@@ -5,7 +5,7 @@ import {
   ForeignKey,
   BelongsTo,
 } from 'sequelize-typescript';
-import { User } from 'src/user/user.entity';
+import { User } from 'src/modules/project/user/user.entity';
 
 @Table({
   tableName: 'categories',

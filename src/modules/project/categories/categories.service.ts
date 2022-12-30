@@ -5,7 +5,7 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { Categories } from './categories.entity';
-import { User } from 'src/user/user.entity';
+import { User } from 'src/modules/project/user/user.entity';
 import { CreateCategoriesDTO } from './dto/create-categories.dto';
 import { UpdateCategoriesDTO } from './dto/update-categories.dto';
 
