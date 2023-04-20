@@ -40,16 +40,23 @@ export class UsersController {
     return this.usersService.findById(id);
   }
 
-  @Post('createUser')
+  @Post('create')
   async create(@Body() body: CreateUserDto) {
     return this.usersService.create(body);
   }
 
   @UseGuards(JwtAuthGuard)
-  @Put('updateUser/:id')
+  @Put('update/:id')
   async update(@Body() body: UpdateUserDTO, @Param() params: IdParamsDTO) {
     const { id } = params;
     return this.usersService.update(body, id);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Put('updatePassword/:id')
+  async updatePassword(@Body() body: UpdateUserDTO, @Param() params: IdParamsDTO) {
+    const { id } = params;
+    return this.usersService.updatePassword(body, id);
   }
 
   @UseGuards(LocalAuthGuard)
@@ -58,7 +65,7 @@ export class UsersController {
     return this.authService.login(req.user);
   }
 
-  @Post('forgotPassword')
+  @Put('forgotPassword')
   async forgotPassword(@Body() body: ForgotPasswordDTO) {
     const { email } = body;
     return this.usersService.forgotPassword(email);

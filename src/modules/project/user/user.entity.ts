@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-var-requires */
-import { Table, Column, Model, BeforeSave } from 'sequelize-typescript';
+import { Table, Column, Model, BeforeCreate } from 'sequelize-typescript';
 const bcrypt = require('bcrypt');
 
 @Table({
@@ -15,8 +15,8 @@ export class User extends Model {
   @Column
   password: string;
 
-  @BeforeSave
-  static async hashPasswordBeforeSave(user: User) {
+  @BeforeCreate
+  static async hashPasswordBeforeCreate(user: User) {
     if (user.password) user.password = await bcrypt.hash(user.password, 8);
   }
 }

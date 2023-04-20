@@ -8,6 +8,7 @@ import { User } from './user.entity';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDTO } from './dto/update-user.dto';
 import { MailerService } from '@nestjs-modules/mailer';
+const bcrypt = require('bcrypt');
 
 @Injectable()
 export class UsersService {
@@ -36,6 +37,27 @@ export class UsersService {
         ...user,
       });
     } catch (errors) {
+      throw new InternalServerErrorException(errors.message);
+    }
+  }
+
+  async updatePassword(user: UpdateUserDTO, id: number): Promise<User> {
+    try {
+      if (user.password) {
+        user.password = await bcrypt.hash(user.password, 8);
+        const userSB = await this.usersRepository.findOne({
+          where: { id: id },
+        });
+        return userSB.update({
+          ...user,
+          fields: ['password']
+        });
+      }
+      else{
+        throw {message: "Password not found"};
+      }
+    } catch (errors) {
+      console.log(errors.message)
       throw new InternalServerErrorException(errors.message);
     }
   }
@@ -73,13 +95,16 @@ export class UsersService {
   async forgotPassword(email: string) {
     try {
       const tempPassword = Math.random().toString(36).slice(-10);
+      console.log(tempPassword);
+      const cryptedPassword = await bcrypt.hash(tempPassword, 8);
       const userDB = await this.usersRepository.findOne({ where: { email } });
       const dataDB = await userDB.update({
-        password: tempPassword,
+        password: cryptedPassword,
+        fields: ['password']
       });
       if (dataDB) {
         const { name } = dataDB.dataValues;
-        this.sendEmail(email, tempPassword, name);
+        //this.sendEmail(email, tempPassword, name);
       }
       return dataDB;
     } catch (errors) {
