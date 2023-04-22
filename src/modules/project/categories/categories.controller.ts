@@ -18,7 +18,7 @@ import { JwtAuthGuard } from 'src/modules/core/auth/jwt-auth.guard';
 export class CategoriesController {
   constructor(private categoriesService: CategoriesService) {}
 
-  @Get('findById/:id')
+  @Get('find/:id')
   async findById(@Param() params: IdParamsDTO) {
     const { id } = params;
     return this.categoriesService.findByid(id);

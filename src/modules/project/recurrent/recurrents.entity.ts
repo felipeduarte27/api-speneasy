@@ -3,6 +3,7 @@ import {
   Column,
   Model,
   ForeignKey,
+  BelongsTo,
 } from 'sequelize-typescript';
 import { Categories } from 'src/modules/project/categories/categories.entity'
 import { User } from 'src/modules/project/user/user.entity'
@@ -36,4 +37,7 @@ export class Recurrents extends Model {
   @ForeignKey(() => Categories)
   @Column({ field: 'categories_id' })
   categoriesId: number;
+
+  @BelongsTo(() => Categories)
+  categories: Categories; 
 }

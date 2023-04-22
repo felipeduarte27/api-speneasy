@@ -27,10 +27,15 @@ export class CategoriesService {
       const dataDB = await this.categoriesRepository.findOne({
         attributes: ['id', 'name'],
         where: { id: id },
-        include: {
+        include: [{
           model: User,
-          attributes: ['id', 'name', 'email'],
+          attributes: ['id', 'name'],
         },
+        {
+          model: Recurrents,
+          where: {active: true},
+          attributes: ['id'],
+        }],
       });
 
       if (!dataDB) {
