@@ -1,4 +1,4 @@
-import { IsString, IsInt } from 'class-validator';
+import { IsString, IsInt, IsBoolean, IsObject, IsOptional } from 'class-validator';
 
 export class CreateCategoriesDTO {
   @IsString()
@@ -6,4 +6,15 @@ export class CreateCategoriesDTO {
 
   @IsInt()
   userId: number;
+
+  @IsBoolean()
+  active: boolean;
+
+  @IsOptional()
+  @IsInt()
+  categoriesId: number;
+
+  @IsOptional()
+  @IsObject()
+  recurrent: object
 }

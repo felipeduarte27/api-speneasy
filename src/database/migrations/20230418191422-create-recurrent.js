@@ -30,11 +30,11 @@ module.exports = {
       },
       final_month: {
         type: Sequelize.INTEGER,
-        allowNull: false,
+        allowNull: true,
       },
       final_year: {
         type: Sequelize.INTEGER,
-        allowNull: false,
+        allowNull: true,
       },
       user_id: {
         type: Sequelize.INTEGER,

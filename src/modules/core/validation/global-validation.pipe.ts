@@ -14,6 +14,7 @@ export class ValidationPipe implements PipeTransform<any> {
     const object = plainToInstance(metatype, value);
     const errors = await validate(object);
     if (errors.length > 0) {
+      console.log(errors);
       throw new BadRequestException('@Params ou @Body Inválidos !');
     }
     return value;

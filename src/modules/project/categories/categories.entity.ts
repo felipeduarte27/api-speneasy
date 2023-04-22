@@ -3,7 +3,6 @@ import {
   Column,
   Model,
   ForeignKey,
-  BelongsTo,
 } from 'sequelize-typescript';
 import { User } from 'src/modules/project/user/user.entity';
 
@@ -14,10 +13,14 @@ export class Categories extends Model {
   @Column
   name: string;
 
+  @Column
+  active: boolean
+
   @ForeignKey(() => User)
   @Column({ field: 'user_id' })
   userId: number;
 
-  @BelongsTo(() => User)
-  user: User;
+  @ForeignKey(() => Categories)
+  @Column({ field: 'categories_id' })
+  categoriesId: number;
 }

@@ -6,6 +6,8 @@ import {
 } from '@nestjs/common';
 import { Categories } from './categories.entity';
 import { User } from 'src/modules/project/user/user.entity';
+import { Recurrents } from '../recurrent/recurrents.entity';
+import { Sequelize } from 'sequelize-typescript';
 import { CreateCategoriesDTO } from './dto/create-categories.dto';
 import { UpdateCategoriesDTO } from './dto/update-categories.dto';
 
@@ -14,6 +16,10 @@ export class CategoriesService {
   constructor(
     @Inject('CATEGORIES_REPOSITORY')
     private categoriesRepository: typeof Categories,
+    @Inject('RECURRENTS_REPOSITORY')
+    private recurrentsRepository: typeof Recurrents,
+    @Inject('SEQUELIZE')
+    private sequelize: Sequelize
   ) {}
 
   async findByid(id: number): Promise<Categories> {
@@ -37,9 +43,22 @@ export class CategoriesService {
     }
   }
 
-  async create(categories: CreateCategoriesDTO): Promise<Categories> {
+  async create(category: CreateCategoriesDTO): Promise<Categories> {
     try {
-      return this.categoriesRepository.create({ ...categories });
+
+      const {name, active, userId, categoriesId, recurrent} = category;
+      let categoryDB = null;
+
+      await this.sequelize.transaction(async t => {
+        const transactionHost = { transaction: t };
+  
+        categoryDB = await this.categoriesRepository.create({ name, active, userId, categoriesId }, transactionHost);
+
+        if(recurrent)
+          await this.recurrentsRepository.create({...recurrent, categoriesId: categoryDB.id}, transactionHost);
+      });
+      return categoryDB;
+
     } catch (errors) {
       throw new InternalServerErrorException(errors.message);
     }
@@ -52,6 +71,20 @@ export class CategoriesService {
       });
       return categoryDB.update({
         ...category,
+      });
+    } catch (errors) {
+      throw new InternalServerErrorException(errors.message);
+    }
+  }
+
+  async delete(id: number): Promise<Categories> {
+    try {
+      const categoryDB = await this.categoriesRepository.findOne({
+        where: { id: id },
+      });
+      return categoryDB.update({
+        active: false,
+        fields: ['active']
       });
     } catch (errors) {
       throw new InternalServerErrorException(errors.message);

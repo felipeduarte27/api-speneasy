@@ -24,17 +24,25 @@ export class CategoriesController {
     return this.categoriesService.findByid(id);
   }
 
-  @Post('createCategories')
+  @Post('create')
   async create(@Body() body: CreateCategoriesDTO) {
     return this.categoriesService.create(body);
   }
 
-  @Put('updateCategories/:id')
+  @Put('update/:id')
   async update(
     @Body() body: UpdateCategoriesDTO,
     @Param() params: IdParamsDTO,
   ) {
     const { id } = params;
     return this.categoriesService.update(body, id);
+  }
+
+  @Put('delete/:id')
+  async delete(
+    @Param() params: IdParamsDTO,
+  ) {
+    const { id } = params;
+    return this.categoriesService.delete(id);
   }
 }
