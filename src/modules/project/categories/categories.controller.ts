@@ -24,6 +24,16 @@ export class CategoriesController {
     return this.categoriesService.findByid(id);
   }
 
+  @Get('findAll')
+  async findAll() {
+    return this.categoriesService.findAll();
+  }
+
+  @Get('findAll')
+  async findByPeriod(@Param() params: any) {
+    return this.categoriesService.findAll();
+  }
+
   @Post('create')
   async create(@Body() body: CreateCategoriesDTO) {
     return this.categoriesService.create(body);

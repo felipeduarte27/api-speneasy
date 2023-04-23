@@ -33,8 +33,9 @@ export class CategoriesService {
         },
         {
           model: Recurrents,
-          where: {active: true},
+          where: {active: true},          
           attributes: ['id'],
+          required: false,
         }],
       });
 
@@ -46,6 +47,37 @@ export class CategoriesService {
     } catch (errors) {
       throw new InternalServerErrorException(errors.message);
     }
+  }
+
+  async findAll(): Promise<Categories[]>{
+    const dataDB = await this.categoriesRepository.findAll({
+      where: {active: true},
+      include: [{
+        model: User,
+        attributes: ['id', 'name'],
+      },
+      {
+        model: Recurrents,
+        where: {active: true},          
+        attributes: ['id', 'value'],
+        required: false,
+      }],
+    })
+    return dataDB;
+  }
+
+  async findByPeriod(mes: number, ano: number): Promise<Categories[]>{
+    const dataDB = await this.categoriesRepository.findAll({
+      include: [
+      {
+        model: Recurrents,
+        where: {active: true},          
+        attributes: ['id', 'value'],        
+      }],
+    });
+
+
+    return dataDB;
   }
 
   async create(category: CreateCategoriesDTO): Promise<Categories> {
@@ -71,13 +103,40 @@ export class CategoriesService {
 
   async update(category: UpdateCategoriesDTO, id: number): Promise<Categories> {
     try {
+      
+      const {name, active, userId, categoriesId, recurrent} = category;
+
       const categoryDB = await this.categoriesRepository.findOne({
         where: { id: id },
       });
+
+      const recurrentDB = await this.recurrentsRepository.findOne({
+        where: {categoriesId: categoryDB.id, active: true}
+      });
+
+      const date = new Date();
+      const month = date.getMonth() + 1;
+      const year = date.getFullYear();
+
+      if(!recurrentDB && recurrent){
+        await this.recurrentsRepository.create({...recurrent, categoriesId: categoryDB.id});
+      }
+      else if (recurrentDB && !recurrent){   
+        
+        await recurrentDB.update({active: false, finalMonth: month, finalYear: year});
+      } 
+      else if (recurrentDB && recurrent) {  
+        if(recurrentDB.value !== recurrent.value){
+          await recurrentDB.update({active: false, finalMonth: month, finalYear: year});
+          await this.recurrentsRepository.create({...recurrent, categoriesId: categoryDB.id});
+        }
+      }
+
       return categoryDB.update({
-        ...category,
+        name, active, userId, categoriesId
       });
     } catch (errors) {
+      console.log(errors)
       throw new InternalServerErrorException(errors.message);
     }
   }

@@ -16,5 +16,5 @@ export class CreateCategoriesDTO {
 
   @IsOptional()
   @IsObject()
-  recurrent: object
+  recurrent: any
 }
