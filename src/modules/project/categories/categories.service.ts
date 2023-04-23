@@ -11,6 +11,8 @@ import { Sequelize } from 'sequelize-typescript';
 import { CreateCategoriesDTO } from './dto/create-categories.dto';
 import { UpdateCategoriesDTO } from './dto/update-categories.dto';
 
+import { buildTree } from './categories.helper';
+
 @Injectable()
 export class CategoriesService {
   constructor(
@@ -49,21 +51,23 @@ export class CategoriesService {
     }
   }
 
-  async findAll(): Promise<Categories[]>{
-    const dataDB = await this.categoriesRepository.findAll({
-      where: {active: true},
-      include: [{
-        model: User,
-        attributes: ['id', 'name'],
-      },
-      {
-        model: Recurrents,
-        where: {active: true},          
-        attributes: ['id', 'value'],
-        required: false,
-      }],
-    })
-    return dataDB;
+  async findAll(): Promise<any>{
+   
+    const date = new Date();
+    const month = date.getMonth() +1;
+    const year = date.getFullYear();
+
+    const [results, metadata] = await this.sequelize.query(`
+        select distinct (c.id), c.categories_id as pai, c."name", 
+        (select r.value from recurrents r where r.categories_id = c.id and r.active is true) as recurrent_value, 
+        (select sum(e.value) from expenses e where e.categories_id = c.id and e."month" = ${month} and e."year" = ${year}) as expenses_value
+        from categories c
+        where c.active is true
+        order by c.id
+    `);
+    
+    const treeData = buildTree(results);
+    return treeData;
   }
 
   async findByPeriod(mes: number, ano: number): Promise<Categories[]>{
