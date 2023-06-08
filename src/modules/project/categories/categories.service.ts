@@ -70,6 +70,10 @@ export class CategoriesService {
     return treeData;
   }
 
+  async findAllActives(userId: number): Promise<any>{
+    return this.categoriesRepository.findAll({where: {active: true, userId: userId}});
+  }
+
   async findByPeriod(month: number, year: number): Promise<any>{
     const [results] = await this.sequelize.query(`
         select distinct (c.id), c.categories_id as pai, c."name", 
@@ -91,7 +95,7 @@ export class CategoriesService {
   async create(category: CreateCategoriesDTO): Promise<Categories> {
     try {
 
-      const {name, active, userId, categoriesId, recurrent} = category;
+      const {name, active, userId, categoriesId} = category;
       let categoryDB = null;
 
       await this.sequelize.transaction(async t => {
@@ -99,8 +103,8 @@ export class CategoriesService {
   
         categoryDB = await this.categoriesRepository.create({ name, active, userId, categoriesId }, transactionHost);
 
-        if(recurrent)
-          await this.recurrentsRepository.create({...recurrent, categoriesId: categoryDB.id}, transactionHost);
+        //if(recurrent)
+        //  await this.recurrentsRepository.create({...recurrent, categoriesId: categoryDB.id}, transactionHost);
       });
       return categoryDB;
 

@@ -24,6 +24,12 @@ export class CategoriesController {
     return this.categoriesService.findByid(id);
   }
 
+  @Get('findAllActives/:userId')
+  async findAllActives(@Param() params: any,) {
+    const { userId } = params;
+    return this.categoriesService.findAllActives(userId);
+  }
+
   @Get('findAll')
   async findAll() {
     return this.categoriesService.findAll();
