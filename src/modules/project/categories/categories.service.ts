@@ -54,7 +54,7 @@ export class CategoriesService {
   async findAll(): Promise<any>{
    
     const date = new Date();
-    const month = date.getMonth() +1;
+    const month = date.getMonth() + 1;
     const year = date.getFullYear();
 
     const [results] = await this.sequelize.query(`
@@ -70,18 +70,22 @@ export class CategoriesService {
     return treeData;
   }
 
-  async findByPeriod(mes: number, ano: number): Promise<Categories[]>{
-    const dataDB = await this.categoriesRepository.findAll({
-      include: [
-      {
-        model: Recurrents,
-        where: {active: true},          
-        attributes: ['id', 'value'],        
-      }],
-    });
-
-
-    return dataDB;
+  async findByPeriod(month: number, year: number): Promise<any>{
+    const [results] = await this.sequelize.query(`
+        select distinct (c.id), c.categories_id as pai, c."name", 
+        (
+          select r.value from recurrents r where r.categories_id = c.id and 
+          ((initial_year < ${year} OR (initial_year  = ${year} AND initial_month  <= ${month}))
+            AND (final_year is null or final_year > ${year} OR (final_year  = ${year} AND final_month  >= ${month}))) limit 1
+          ) as recurrent_value, 
+        (select sum(e.value) from expenses e where e.categories_id = c.id and e."month" = ${month} and e."year" = ${year}) as expenses_value
+        from categories c
+        where c.active is true
+        order by c.id
+    `);
+    
+    const treeData = buildTree(results);
+    return treeData;
   }
 
   async create(category: CreateCategoriesDTO): Promise<Categories> {

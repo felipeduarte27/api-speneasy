@@ -54,7 +54,7 @@ export class UsersController {
 
   @UseGuards(JwtAuthGuard)
   @Put('updatePassword/:id')
-  async updatePassword(@Body() body: UpdateUserDTO, @Param() params: IdParamsDTO) {
+  async updatePassword(@Body() body: any, @Param() params: IdParamsDTO) {
     const { id } = params;
     return this.usersService.updatePassword(body, id);
   }

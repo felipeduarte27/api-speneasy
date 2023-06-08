@@ -29,9 +29,10 @@ export class CategoriesController {
     return this.categoriesService.findAll();
   }
 
-  @Get('findAll')
+  @Get('findByPeriod/:month/:year')
   async findByPeriod(@Param() params: any) {
-    return this.categoriesService.findAll();
+    const { month, year } = params;
+    return this.categoriesService.findByPeriod(month, year);
   }
 
   @Post('create')

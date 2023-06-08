@@ -41,7 +41,7 @@ export class UsersService {
     }
   }
 
-  async updatePassword(user: UpdateUserDTO, id: number): Promise<User> {
+  async updatePassword(user: any, id: number): Promise<User> {
     try {
       if (user.password) {
         user.password = await bcrypt.hash(user.password, 8);
