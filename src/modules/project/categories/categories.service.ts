@@ -51,7 +51,7 @@ export class CategoriesService {
     }
   }
 
-  async findAll(): Promise<any>{
+  async findAll(userId: number): Promise<any>{
    
     const date = new Date();
     const month = date.getMonth() + 1;
@@ -62,7 +62,7 @@ export class CategoriesService {
         (select r.value from recurrents r where r.categories_id = c.id and r.active is true) as recurrent_value, 
         (select sum(e.value) from expenses e where e.categories_id = c.id and e."month" = ${month} and e."year" = ${year}) as expenses_value
         from categories c
-        where c.active is true
+        where c.active is true and user_id = ${userId}
         order by c.id
     `);
     
@@ -71,7 +71,10 @@ export class CategoriesService {
   }
 
   async findAllActives(userId: number): Promise<any>{
-    return this.categoriesRepository.findAll({where: {active: true, userId: userId}});
+    return this.categoriesRepository.findAll({
+      where: {active: true, userId: userId},
+      order: ['name']
+    });
   }
 
   async findByPeriod(month: number, year: number): Promise<any>{
@@ -121,28 +124,6 @@ export class CategoriesService {
       const categoryDB = await this.categoriesRepository.findOne({
         where: { id: id },
       });
-
-      const recurrentDB = await this.recurrentsRepository.findOne({
-        where: {categoriesId: categoryDB.id, active: true}
-      });
-
-      const date = new Date();
-      const month = date.getMonth() + 1;
-      const year = date.getFullYear();
-
-      if(!recurrentDB && recurrent){
-        await this.recurrentsRepository.create({...recurrent, categoriesId: categoryDB.id});
-      }
-      else if (recurrentDB && !recurrent){   
-        
-        await recurrentDB.update({active: false, finalMonth: month, finalYear: year});
-      } 
-      else if (recurrentDB && recurrent) {  
-        if(recurrentDB.value !== recurrent.value){
-          await recurrentDB.update({active: false, finalMonth: month, finalYear: year});
-          await this.recurrentsRepository.create({...recurrent, categoriesId: categoryDB.id});
-        }
-      }
 
       return categoryDB.update({
         name, active, userId, categoriesId

@@ -6,6 +6,7 @@ import {
   Put,
   Body,
   UseGuards,
+  Delete,
 } from '@nestjs/common';
 import { CategoriesService } from './categories.service';
 import { CreateCategoriesDTO } from './dto/create-categories.dto';
@@ -30,9 +31,10 @@ export class CategoriesController {
     return this.categoriesService.findAllActives(userId);
   }
 
-  @Get('findAll')
-  async findAll() {
-    return this.categoriesService.findAll();
+  @Get('findAll/:userId')
+  async findAll(@Param() params: any,) {
+    const { userId } = params;
+    return this.categoriesService.findAll(userId);
   }
 
   @Get('findByPeriod/:month/:year')
@@ -55,7 +57,7 @@ export class CategoriesController {
     return this.categoriesService.update(body, id);
   }
 
-  @Put('delete/:id')
+  @Delete('delete/:id')
   async delete(
     @Param() params: IdParamsDTO,
   ) {
