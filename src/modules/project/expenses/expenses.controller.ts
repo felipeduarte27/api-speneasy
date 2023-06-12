@@ -1,4 +1,4 @@
-import { Controller, UseGuards, Post, Body } from "@nestjs/common";
+import { Controller, UseGuards, Post, Get, Body } from "@nestjs/common";
 import { JwtAuthGuard } from "src/modules/core/auth/jwt-auth.guard";
 import { CreaterExpensesDTO } from "./dto/create-expenses.dto";
 import { ExpensesService } from "./expenses.service";
@@ -9,7 +9,12 @@ export class ExpensesController {
   constructor(private expensesService: ExpensesService){}
 
   @Post('create')
-  async create(@Body() body: CreaterExpensesDTO){
+  async create(@Body() body: CreaterExpensesDTO){    
     return this.expensesService.create(body);
+  }
+
+  @Get('findTotalExpenseActualMonth')
+  async findTotalExpenseActualMonth(){
+    return this.expensesService.findTotalExpenseActualMonth();
   }
 }
