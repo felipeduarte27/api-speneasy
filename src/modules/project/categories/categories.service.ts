@@ -86,8 +86,14 @@ export class CategoriesService {
             AND (final_year is null or final_year > ${year} OR (final_year  = ${year} AND final_month  >= ${month}))) limit 1
           ) as recurrent_value, 
         (select sum(e.value) from expenses e where e.categories_id = c.id and e."month" = ${month} and e."year" = ${year}) as expenses_value
-        from categories c
-        where c.active is true
+        from categories c 
+        where 
+        c.id in ( select categories_id from expenses e2 where e2."month" = ${month} and e2."year" = ${year} ) or
+        c.id in ( 
+          select c2.categories_id 
+          from categories c2 
+          inner join expenses e3 on c2.id = e3.categories_id 
+          where e3."month" = ${month} and e3."year" = ${year} )   
         order by c.id
     `);
     

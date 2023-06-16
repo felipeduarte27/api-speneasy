@@ -47,4 +47,24 @@ export class ExpensesService {
       throw new InternalServerErrorException(errors.message);
     }
   };
+
+  async findTotalExpensesByPeriod(month: number, year: number): Promise<number>{
+    try{
+
+      const [results] = await this.sequelize.query(`
+        select sum(value) from expenses e where "month" = ${month} and "year" = ${year};
+      `);
+      const obj: Object = results[0];
+      
+      if(obj.sum > 0){
+        return obj.sum;
+      }else{
+        return 0;
+      }
+
+    }catch(errors){
+      console.log(errors)
+      throw new InternalServerErrorException(errors.message);
+    }
+  };
 }
