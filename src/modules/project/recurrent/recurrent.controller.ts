@@ -3,7 +3,7 @@ import {
   Param,
   Get,
   Post,
-  Put,
+  Delete,
   Body,
   UseGuards,
 } from '@nestjs/common';
@@ -21,5 +21,19 @@ export class RecurrentController {
   @Post('create')
   async create(@Body() body: CreateRecurrentDTO) {
     return this.recurrentsService.create(body);
+  }
+
+  @Get('findAllActives/:userId')
+  async findAllActives(@Param() params: any,) {
+    const { userId } = params;
+    return this.recurrentsService.findAllActives(userId);
+  }
+
+  @Delete('delete/:id')
+  async delete(
+    @Param() params: IdParamsDTO,
+  ) {
+    const { id } = params;
+    return this.recurrentsService.delete(id);
   }
 }
