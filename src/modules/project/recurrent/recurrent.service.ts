@@ -2,12 +2,19 @@ import { Injectable, Inject, InternalServerErrorException } from "@nestjs/common
 import { Recurrents } from "./recurrents.entity";
 import { CreateRecurrentDTO } from "./dto/create-recurrent.dto";
 import { Categories } from "../categories/categories.entity";
+import { Sequelize } from 'sequelize-typescript';
+
+type Object = {
+  [key: string]: any; 
+};
 
 @Injectable()
 export class RecurrentsService {
   constructor(
     @Inject('RECURRENTS_REPOSITORY')
-    private recurrentsRepository: typeof Recurrents,   
+    private recurrentsRepository: typeof Recurrents,
+    @Inject('SEQUELIZE')
+    private sequelize: Sequelize   
   ){}
 
   async create(recurrent: CreateRecurrentDTO): Promise<Recurrents>{
@@ -53,4 +60,30 @@ export class RecurrentsService {
       throw new InternalServerErrorException(errors.message);
     }
   }
+
+  async findTotalRecurrentsActualMonth(): Promise<number>{
+    try{
+
+      const date = new Date();
+      const month = date.getMonth() + 1;
+    const year = date.getFullYear();
+      const [results] = await this.sequelize.query(`
+        select sum(value) from recurrents r 
+        where "active" is true and 
+        (initial_year < ${year} OR (initial_year  = ${year} AND initial_month  <= ${month}))
+            AND (final_year is null or final_year > ${year} OR (final_year  = ${year} AND final_month  >= ${month}))
+      `);
+      const obj: Object = results[0];
+      
+      if(obj.sum > 0){
+        return obj.sum;
+      }else{
+        return 0;
+      }
+
+    }catch(errors){
+      console.log(errors)
+      throw new InternalServerErrorException(errors.message);
+    }
+  };
 }

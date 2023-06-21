@@ -8,7 +8,6 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { IdParamsDTO } from '../../core/validation/id-params.dto';
-import { UserIdParamsDTO } from '../../core/validation/user-id-params.dto';
 import { JwtAuthGuard } from 'src/modules/core/auth/jwt-auth.guard';
 import { CreateRecurrentDTO } from './dto/create-recurrent.dto';
 import { RecurrentsService } from './recurrent.service';
@@ -35,5 +34,11 @@ export class RecurrentController {
   ) {
     const { id } = params;
     return this.recurrentsService.delete(id);
+  }
+
+  @Get('findTotalRecurrentsActualMonth')
+  async findTotalExpenseActualMonth(){
+    console.log('chegou aki')
+    return this.recurrentsService.findTotalRecurrentsActualMonth();
   }
 }
