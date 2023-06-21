@@ -12,6 +12,11 @@ import { JwtAuthGuard } from 'src/modules/core/auth/jwt-auth.guard';
 import { CreateRecurrentDTO } from './dto/create-recurrent.dto';
 import { RecurrentsService } from './recurrent.service';
 
+interface Period {
+  month: number,
+  year: number
+}
+
 @Controller('recurrents')
 @UseGuards(JwtAuthGuard)
 export class RecurrentController {
@@ -38,7 +43,12 @@ export class RecurrentController {
 
   @Get('findTotalRecurrentsActualMonth')
   async findTotalExpenseActualMonth(){
-    console.log('chegou aki')
     return this.recurrentsService.findTotalRecurrentsActualMonth();
+  }
+
+  @Get('findTotalRecurrentsByPeriod/:month/:year')
+  async findTotalExpensesByPeriod(@Param() params: Period){
+    const { month, year } = params;
+    return this.recurrentsService.findTotalRecurrentsByPeriod(month, year);
   }
 }

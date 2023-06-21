@@ -86,4 +86,27 @@ export class RecurrentsService {
       throw new InternalServerErrorException(errors.message);
     }
   };
+
+  async findTotalRecurrentsByPeriod(month: number, year: number): Promise<number>{
+    try{
+      
+      const [results] = await this.sequelize.query(`
+        select sum(value) from recurrents r 
+        where "active" is true and 
+        (initial_year < ${year} OR (initial_year  = ${year} AND initial_month  <= ${month}))
+            AND (final_year is null or final_year > ${year} OR (final_year  = ${year} AND final_month  >= ${month}))
+      `);
+      const obj: Object = results[0];
+      
+      if(obj.sum > 0){
+        return obj.sum;
+      }else{
+        return 0;
+      }
+
+    }catch(errors){
+      console.log(errors)
+      throw new InternalServerErrorException(errors.message);
+    }
+  };
 }

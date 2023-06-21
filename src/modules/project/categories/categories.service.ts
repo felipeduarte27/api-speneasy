@@ -105,7 +105,20 @@ export class CategoriesService {
         (select sum(e.value) from expenses e where e.categories_id = c.id and e."month" = ${month} and e."year" = ${year}) as expenses_value
         from categories c 
         where 
-        c.id in ( select categories_id from expenses e2 where e2."month" = ${month} and e2."year" = ${year} ) or
+        c.id in ( 
+          select categories_id from recurrents r2 where 
+            (r2.initial_year < ${year} OR (r2.initial_year  = ${year} AND r2.initial_month  <= ${month}))
+              AND (r2.final_year is null or r2.final_year > ${year} OR (r2.final_year  = ${year} AND r2.final_month  >= ${month}))
+        ) 
+        or 
+        c.id in ( 
+          select c3.categories_id from categories c3 inner join recurrents r3 on r3.categories_id = c3.id where
+            (r3.initial_year < ${year} OR (r3.initial_year  = ${year} AND r3.initial_month  <= ${month}))
+              AND (r3.final_year is null or r3.final_year > ${year} OR (r3.final_year  = ${year} AND r3.final_month  >= ${month}))
+        ) 
+        or
+        c.id in ( select categories_id from expenses e2 where e2."month" = ${month} and e2."year" = ${year} ) 
+        or
         c.id in ( 
           select c2.categories_id 
           from categories c2 
@@ -113,7 +126,7 @@ export class CategoriesService {
           where e3."month" = ${month} and e3."year" = ${year} )   
         order by c.id
     `);
-    
+
     const treeData = buildTree(results);
     return treeData;
   }
@@ -129,8 +142,6 @@ export class CategoriesService {
   
         categoryDB = await this.categoriesRepository.create({ name, active, userId, categoriesId }, transactionHost);
 
-        //if(recurrent)
-        //  await this.recurrentsRepository.create({...recurrent, categoriesId: categoryDB.id}, transactionHost);
       });
       return categoryDB;
 
