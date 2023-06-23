@@ -2,6 +2,7 @@ import { Injectable, Inject, InternalServerErrorException } from "@nestjs/common
 import { Expenses } from "./expenses.entity";
 import { CreaterExpensesDTO } from "./dto/create-expenses.dto";
 import { Sequelize } from 'sequelize-typescript';
+import { Categories } from "../categories/categories.entity";
 
 type Object = {
   [key: string]: any; 
@@ -67,4 +68,34 @@ export class ExpensesService {
       throw new InternalServerErrorException(errors.message);
     }
   };
+
+  async findByPeriod(month: number, year: number): Promise<Expenses[]>{
+    try{
+
+      return this.expensesRepository.findAll({
+        where: { month: month, year: year},
+        include: [
+          {
+            model: Categories,
+            attributes: ['id', 'name'],
+          }
+        ]
+      });
+
+    }catch(errors){
+      console.log(errors)
+      throw new InternalServerErrorException(errors.message);
+    }
+  };
+
+  async delete(id: number): Promise<any>{
+    try{
+      
+      return this.expensesRepository.destroy({ where: { id: id }});
+
+    }catch(errors){
+      console.log(errors)
+      throw new InternalServerErrorException(errors.message);
+    }
+  }
 }

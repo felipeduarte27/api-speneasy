@@ -1,7 +1,8 @@
-import { Controller, UseGuards, Post, Get, Body, Param } from "@nestjs/common";
+import { Controller, UseGuards, Post, Get, Body, Param, Delete } from "@nestjs/common";
 import { JwtAuthGuard } from "src/modules/core/auth/jwt-auth.guard";
 import { CreaterExpensesDTO } from "./dto/create-expenses.dto";
 import { ExpensesService } from "./expenses.service";
+import { IdParamsDTO } from "src/modules/core/validation/id-params.dto";
 
 interface Period {
   month: number,
@@ -27,5 +28,17 @@ export class ExpensesController {
   async findTotalExpensesByPeriod(@Param() params: Period){
     const { month, year } = params;
     return this.expensesService.findTotalExpensesByPeriod(month, year);
+  }
+
+  @Get('findByPeriod/:month/:year')
+  async findByPeriod(@Param() params: Period){
+    const { month, year } = params;
+    return this.expensesService.findByPeriod(month, year);
+  }
+
+  @Delete('delete/:id')
+  async delete(@Param() params: IdParamsDTO){
+    const { id } = params;
+    return this.expensesService.delete(id);
   }
 }
