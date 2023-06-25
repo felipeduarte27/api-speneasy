@@ -6,21 +6,23 @@ import {
   Put,
   Body,
   UseGuards,
+  Query
 } from '@nestjs/common';
 import { IdParamsDTO } from '../../core/validation/id-params.dto';
 import { UserIdParamsDTO } from '../../core/validation/user-id-params.dto';
 import { JwtAuthGuard } from 'src/modules/core/auth/jwt-auth.guard';
 import { CreateUpdateIncomesDTO } from './dto/create-update-incomes.dto';
 import { IncomesService } from './incomes.service';
+import { ParseIntPipe } from '@nestjs/common';
 
 @Controller('incomes')
 @UseGuards(JwtAuthGuard)
 export class IncomesController {
   constructor(private incomesService: IncomesService) {}
 
-  @Get('find/:userId')
-  async findById(@Param() params: UserIdParamsDTO) {
-    const { userId } = params;
+  @Get('find')
+  async findById(@Query('userId', ParseIntPipe) userId: number) {
+    
     return this.incomesService.findActive(userId);
   }
 

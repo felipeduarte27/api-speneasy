@@ -1,8 +1,9 @@
-import { Controller, UseGuards, Post, Get, Body, Param, Delete } from "@nestjs/common";
+import { Controller, UseGuards, Post, Get, Body, Param, Delete, Query } from "@nestjs/common";
 import { JwtAuthGuard } from "src/modules/core/auth/jwt-auth.guard";
 import { CreaterExpensesDTO } from "./dto/create-expenses.dto";
 import { ExpensesService } from "./expenses.service";
 import { IdParamsDTO } from "src/modules/core/validation/id-params.dto";
+import { ParseIntPipe } from '@nestjs/common';
 
 interface Period {
   month: number,
