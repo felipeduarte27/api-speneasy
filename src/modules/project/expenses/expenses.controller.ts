@@ -20,20 +20,20 @@ export class ExpensesController {
   }
 
   @Get('findTotalExpenseActualMonth')
-  async findTotalExpenseActualMonth(){
-    return this.expensesService.findTotalExpenseActualMonth();
+  async findTotalExpenseActualMonth(@Query('userId', ParseIntPipe) userId: number){
+    return this.expensesService.findTotalExpenseActualMonth(userId);
   }
 
   @Get('findTotalExpensesByPeriod/:month/:year')
-  async findTotalExpensesByPeriod(@Param() params: Period){
+  async findTotalExpensesByPeriod(@Param() params: Period, @Query('userId', ParseIntPipe) userId: number){
     const { month, year } = params;
-    return this.expensesService.findTotalExpensesByPeriod(month, year);
+    return this.expensesService.findTotalExpensesByPeriod(month, year, userId);
   }
 
   @Get('findByPeriod/:month/:year')
-  async findByPeriod(@Param() params: Period){
+  async findByPeriod(@Param() params: Period, @Query('userId', ParseIntPipe) userId: number){
     const { month, year } = params;
-    return this.expensesService.findByPeriod(month, year);
+    return this.expensesService.findByPeriod(month, year, userId);
   }
 
   @Delete('delete/:id')

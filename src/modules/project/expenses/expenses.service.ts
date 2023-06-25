@@ -28,12 +28,12 @@ export class ExpensesService {
     }
   }
 
-  async findTotalExpenseActualMonth(): Promise<number>{
+  async findTotalExpenseActualMonth(userId: number): Promise<number>{
     try{
 
       const date = new Date();
       const [results] = await this.sequelize.query(`
-        select sum(value) from expenses e where "month" = ${date.getMonth() + 1} and "year" = ${date.getFullYear()};
+        select sum(value) from expenses e where e."user_id" = ${userId} and "month" = ${date.getMonth() + 1} and "year" = ${date.getFullYear()};
       `);
       const obj: Object = results[0];
       
@@ -49,11 +49,11 @@ export class ExpensesService {
     }
   };
 
-  async findTotalExpensesByPeriod(month: number, year: number): Promise<number>{
+  async findTotalExpensesByPeriod(month: number, year: number, userId: number): Promise<number>{
     try{
 
       const [results] = await this.sequelize.query(`
-        select sum(value) from expenses e where "month" = ${month} and "year" = ${year};
+        select sum(value) from expenses e where e."user_id" = ${userId} and "month" = ${month} and "year" = ${year};
       `);
       const obj: Object = results[0];
       
@@ -69,11 +69,11 @@ export class ExpensesService {
     }
   };
 
-  async findByPeriod(month: number, year: number): Promise<Expenses[]>{
+  async findByPeriod(month: number, year: number, userId: number): Promise<Expenses[]>{
     try{
 
       return this.expensesRepository.findAll({
-        where: { month: month, year: year},
+        where: { month: month, year: year, userId: userId},
         include: [
           {
             model: Categories,
