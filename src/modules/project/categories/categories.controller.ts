@@ -7,12 +7,14 @@ import {
   Body,
   UseGuards,
   Delete,
+  Query,
 } from '@nestjs/common';
 import { CategoriesService } from './categories.service';
 import { CreateCategoriesDTO } from './dto/create-categories.dto';
 import { UpdateCategoriesDTO } from './dto/update-categories.dto';
 import { IdParamsDTO } from '../../core/validation/id-params.dto';
 import { JwtAuthGuard } from 'src/modules/core/auth/jwt-auth.guard';
+import { ParseIntPipe } from '@nestjs/common';
 
 @Controller('categories')
 @UseGuards(JwtAuthGuard)
@@ -25,22 +27,23 @@ export class CategoriesController {
     return this.categoriesService.findByid(id);
   }
 
-  @Get('findAllActives/:userId')
-  async findAllActives(@Param() params: any,) {
-    const { userId } = params;
+  @Get('findAllActives')
+  async findAllActives(@Query('userId', ParseIntPipe) userId: number) {
+ 
     return this.categoriesService.findAllActives(userId);
   }
 
-  @Get('findAll/:userId')
-  async findAll(@Param() params: any,) {
-    const { userId } = params;
+  @Get('findAll')
+  async findAll(@Query('userId', ParseIntPipe) userId: number) {
+
     return this.categoriesService.findAll(userId);
   }
 
   @Get('findByPeriod/:month/:year')
-  async findByPeriod(@Param() params: any) {
+  async findByPeriod(@Param() params: any, @Query('userId', ParseIntPipe) userId: number) {
     const { month, year } = params;
-    return this.categoriesService.findByPeriod(month, year);
+
+    return this.categoriesService.findByPeriod(month, year, userId);
   }
 
   @Post('create')

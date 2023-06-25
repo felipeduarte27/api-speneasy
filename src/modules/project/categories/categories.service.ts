@@ -94,36 +94,36 @@ export class CategoriesService {
     });
   }
 
-  async findByPeriod(month: number, year: number): Promise<any>{
+  async findByPeriod(month: number, year: number, userId: number): Promise<any>{
     const [results] = await this.sequelize.query(`
         select distinct (c.id), c.categories_id as pai, c."name", 
         (
-          select r.value from recurrents r where r.categories_id = c.id and 
+          select r.value from recurrents r where r.user_id = ${userId} and r.categories_id = c.id and 
           ((initial_year < ${year} OR (initial_year  = ${year} AND initial_month  <= ${month}))
             AND (final_year is null or final_year > ${year} OR (final_year  = ${year} AND final_month  >= ${month}))) limit 1
           ) as recurrent_value, 
-        (select sum(e.value) from expenses e where e.categories_id = c.id and e."month" = ${month} and e."year" = ${year}) as expenses_value
+        (select sum(e.value) from expenses e where e.user_id = ${userId} and e.categories_id = c.id and e."month" = ${month} and e."year" = ${year}) as expenses_value
         from categories c 
         where 
         c.id in ( 
-          select categories_id from recurrents r2 where 
+          select categories_id from recurrents r2 where r2.user_id = ${userId} and
             (r2.initial_year < ${year} OR (r2.initial_year  = ${year} AND r2.initial_month  <= ${month}))
               AND (r2.final_year is null or r2.final_year > ${year} OR (r2.final_year  = ${year} AND r2.final_month  >= ${month}))
         ) 
         or 
         c.id in ( 
-          select c3.categories_id from categories c3 inner join recurrents r3 on r3.categories_id = c3.id where
+          select c3.categories_id from categories c3 inner join recurrents r3 on r3.categories_id = c3.id where c3.user_id = ${userId} and
             (r3.initial_year < ${year} OR (r3.initial_year  = ${year} AND r3.initial_month  <= ${month}))
               AND (r3.final_year is null or r3.final_year > ${year} OR (r3.final_year  = ${year} AND r3.final_month  >= ${month}))
         ) 
         or
-        c.id in ( select categories_id from expenses e2 where e2."month" = ${month} and e2."year" = ${year} ) 
+        c.id in ( select categories_id from expenses e2 where e2.user_id = ${userId} and e2."month" = ${month} and e2."year" = ${year} ) 
         or
         c.id in ( 
           select c2.categories_id 
           from categories c2 
           inner join expenses e3 on c2.id = e3.categories_id 
-          where e3."month" = ${month} and e3."year" = ${year} )   
+          where c2.user_id = ${userId} and e3."month" = ${month} and e3."year" = ${year} )   
         order by c.id
     `);
 
