@@ -12,6 +12,7 @@ import {
 import { IdParamsDTO } from '../../core/validation/id-params.dto';
 import { JwtAuthGuard } from 'src/modules/core/auth/jwt-auth.guard';
 import { CreateRecurrentDTO } from './dto/create-recurrent.dto';
+import { UpdateRecurrentDTO } from './dto/update-recurrent.dto';
 import { RecurrentsService } from './recurrent.service';
 import { ParseIntPipe } from '@nestjs/common';
 
@@ -47,7 +48,7 @@ export class RecurrentController {
   @Put('update/:id')
   async update(
     @Param() params: IdParamsDTO,
-    @Body() body: any
+    @Body() body: UpdateRecurrentDTO
   ) {
     const { id } = params;
     

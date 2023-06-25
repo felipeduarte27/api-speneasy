@@ -1,6 +1,7 @@
 import { Injectable, Inject, InternalServerErrorException } from "@nestjs/common";
 import { Recurrents } from "./recurrents.entity";
 import { CreateRecurrentDTO } from "./dto/create-recurrent.dto";
+import { UpdateRecurrentDTO } from "./dto/update-recurrent.dto";
 import { Categories } from "../categories/categories.entity";
 import { Sequelize } from 'sequelize-typescript';
 
@@ -28,7 +29,7 @@ export class RecurrentsService {
     }
   }
 
-  async update(recurrent: any, id: number): Promise<Recurrents>{
+  async update(recurrent: UpdateRecurrentDTO, id: number): Promise<Recurrents>{
     try{
       
       const recurrentDB = await this.recurrentsRepository.findOne({
