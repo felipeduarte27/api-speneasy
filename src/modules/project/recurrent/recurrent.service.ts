@@ -61,15 +61,15 @@ export class RecurrentsService {
     }
   }
 
-  async findTotalRecurrentsActualMonth(): Promise<number>{
+  async findTotalRecurrentsActualMonth(userId: number): Promise<number>{
     try{
 
       const date = new Date();
       const month = date.getMonth() + 1;
-    const year = date.getFullYear();
+      const year = date.getFullYear();
       const [results] = await this.sequelize.query(`
         select sum(value) from recurrents r 
-        where "active" is true and 
+        where r."user_id" = ${userId} and r."active" is true and 
         (initial_year < ${year} OR (initial_year  = ${year} AND initial_month  <= ${month}))
             AND (final_year is null or final_year > ${year} OR (final_year  = ${year} AND final_month  >= ${month}))
       `);
@@ -87,12 +87,12 @@ export class RecurrentsService {
     }
   };
 
-  async findTotalRecurrentsByPeriod(month: number, year: number): Promise<number>{
+  async findTotalRecurrentsByPeriod(month: number, year: number, userId: number): Promise<number>{
     try{
       
       const [results] = await this.sequelize.query(`
         select sum(value) from recurrents r 
-        where "active" is true and 
+        where r."user_id" = ${userId} and r."active" is true and 
         (initial_year < ${year} OR (initial_year  = ${year} AND initial_month  <= ${month}))
             AND (final_year is null or final_year > ${year} OR (final_year  = ${year} AND final_month  >= ${month}))
       `);
