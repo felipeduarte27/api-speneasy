@@ -28,6 +28,23 @@ export class RecurrentsService {
     }
   }
 
+  async update(recurrent: any, id: number): Promise<Recurrents>{
+    try{
+      
+      const recurrentDB = await this.recurrentsRepository.findOne({
+        where: { id: id },
+      });
+
+      const { active, value, initialMonth, initialYear, finalMonth, finalYear, userId, categoriesId } = recurrent;
+      return recurrentDB.update({
+        active, value, initialMonth, initialYear, finalMonth, finalYear, userId, categoriesId
+      });
+
+    }catch(errors){
+      throw new InternalServerErrorException(errors.message);
+    }
+  }
+
   async findAllActives(userId: number): Promise<any>{
     try{
       

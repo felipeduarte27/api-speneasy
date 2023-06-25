@@ -6,7 +6,8 @@ import {
   Delete,
   Body,
   UseGuards,
-  Query
+  Query,
+  Put
 } from '@nestjs/common';
 import { IdParamsDTO } from '../../core/validation/id-params.dto';
 import { JwtAuthGuard } from 'src/modules/core/auth/jwt-auth.guard';
@@ -41,6 +42,16 @@ export class RecurrentController {
   ) {
     const { id } = params;
     return this.recurrentsService.delete(id);
+  }
+
+  @Put('update/:id')
+  async update(
+    @Param() params: IdParamsDTO,
+    @Body() body: any
+  ) {
+    const { id } = params;
+    
+    return this.recurrentsService.update(body, id);
   }
 
   @Get('findTotalRecurrentsActualMonth')
