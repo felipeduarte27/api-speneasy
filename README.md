@@ -7,7 +7,7 @@
 
 ## Description
 
-An api for a financial control application made using the nest js framework.
+An api for a financial control application made using nest js framework.
 
 ## Installation
 
