@@ -4,7 +4,7 @@ module.exports = {
     host: 'localhost',
     port: 5432,
     username: 'postgres',
-    password: '123',
+    password: '',
     database: 'speneasy',
   },
   test: {
@@ -12,7 +12,7 @@ module.exports = {
     host: 'localhost',
     port: 5432,
     username: 'postgres',
-    password: '123',
+    password: '',
     database: 'speneasy',
   },
   production: {
@@ -20,7 +20,7 @@ module.exports = {
     host: 'localhost',
     port: 5432,
     username: 'postgres',
-    password: '123',
+    password: '',
     database: 'speneasy',
   },
 };
