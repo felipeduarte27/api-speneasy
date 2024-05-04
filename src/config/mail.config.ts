@@ -7,8 +7,8 @@ export const mailConfig = MailerModule.forRoot({
     port: 587, // porta
     auth: {
       //dados do usuário e senha
-      user: 'postmaster@sandbox369169e470054998b86ca7736c807444.mailgun.org',
-      pass: 'ef7d5dd3a000482d90bb60c3f0117a8a-c2efc90c-fe535335',
+      user: '',
+      pass: '',
     },
     ignoreTLS: true,
   },
